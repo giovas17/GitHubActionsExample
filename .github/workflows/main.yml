@@ -39,4 +39,4 @@ jobs:
 
       ## Add a kotlin linter
       - name: Run Kotlin Linter
-        run: ./gradlew ktlintStagingDebugCheck
+        run: ./gradlew lintDebug
