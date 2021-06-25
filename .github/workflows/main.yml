@@ -51,10 +51,10 @@ jobs:
   test:
     runs-on: macos-latest
     needs: build
-    strategy:
-      matrix:
-        api-level: [ 21, 23, 29 ]
-        target: [ default ]
+    ##strategy:
+    ##  matrix:
+    ##    api-level: [ 21, 23, 29 ]
+    ##    target: [ default ]
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -80,12 +80,20 @@ jobs:
       - name: Run Unit Tests
         run: ./gradlew -Pci --console=plain testDebugUnitTest
 
-      ## Adding instrumentation test
-      - name: Instrumentation Tests
-        uses: reactivecircus/android-emulator-runner@v2
+      ## Upload to github the reports for the unit/instrumental test
+      - name: Upload Reports
+        uses: actions/upload-artifact@v2
         with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: x86
-          profile: Nexus 6
-          script: ./gradlew connectedCheck --stacktrace
+          name: Test-Reports
+          path: app/build/reports
+        if: always()
+
+      ## Adding instrumentation test
+      ##- name: Instrumentation Tests
+      ##  uses: reactivecircus/android-emulator-runner@v2
+      ##  with:
+      ##    api-level: ${{ matrix.api-level }}
+      ##    target: ${{ matrix.target }}
+      ##    arch: x86
+      ##    profile: Nexus 6
+      ##    script: ./gradlew connectedCheck --stacktrace
