@@ -35,11 +35,8 @@ jobs:
 
       ## Build the project in staging mode ##
       - name: Build project
-        id: buildAllApks
-        uses: eskatos/gradle-command-action@v1.3.3
-        with:
-          gradle-version: current
-          wrapper-cache-enabled: true
-          dependencies-cache-enabled: true
-          configuration-cache-enabled: true
-          arguments: assembleDebug
+        run: ./gradlew assembleDebug
+
+      ## Add a kotlin linter
+      - name: Run Kotlin Linter
+        run: ./gradlew ktlintStagingDebugCheck
