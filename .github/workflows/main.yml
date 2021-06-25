@@ -19,10 +19,6 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        api-level: [ 21, 23, 29 ]
-        target: [ default ]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -51,6 +47,34 @@ jobs:
       ## Add a kotlin linter
       - name: Run Kotlin Linter
         run: ./gradlew lintDebug
+
+  test:
+    runs-on: macos-latest
+    needs: build
+    strategy:
+      matrix:
+        api-level: [ 21, 23, 29 ]
+        target: [ default ]
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Usage of cache for making the builds faster
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+
+      # Setup our JDK environment
+      - name: Setup Android JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '8'
 
       ## Adding step for testing
       - name: Run Unit Tests
